@@ -23,7 +23,7 @@ describe CryptoGost3410 do
         let(:public_key) { group.generate_public_key private_key }
         let(:message) { Faker::Lorem.sentence(3) }
         let(:size) { if name.start_with?("Gost512") then 512 else 256 end }
-        let(:hash) { Stribog::CreateHash.new(message).(size).dec }
+        let(:hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
         let(:generator) { CryptoGost3410::Generator.new(hash, group) }
         let(:signature) { generator.(private_key) }
         let(:verifier) { CryptoGost3410::Verifier.new(hash, group) }
@@ -34,7 +34,7 @@ describe CryptoGost3410 do
 
         context 'change message' do
           let(:another_message) { Faker::Lorem.sentence(2) }
-          let(:another_hash) { Stribog::CreateHash.new(message).(size).dec }
+          let(:another_hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
           let(:verifier) { CryptoGost3410::Verifier.new(another_hash, group) }
 
           it 'has invalid sign' do

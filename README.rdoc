@@ -1,6 +1,7 @@
 == CryptoGost3410
 
-Ruby library implementing GOST 34.10-2012 ECC
+Ruby library implementing GOST 34.10-2012 ECC signature algorithms.
+Forked from https://github.com/wilddima/crypto_gost.
 
 === Installation
 
@@ -19,26 +20,27 @@ Or install it yourself as:
 === Usage
 
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
-  # As so, Stribog message hash should be converted to big number too.
-  
+  # As so, input Stribog message hash shoud be converted to big number too.
+  # Note: You need to reverse input/output bytes for Stribog gem to get right GOST 3411-2012 digest.
+
   require 'stribog'
   require 'crypto_gost3410'
-  
+
   group = CryptoGost3410::Group::Gost256cpA
   if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
-  
+
   private_key = group.generate_private_key
   puts "private_key: #{private_key}"
-  
+
   public_key = group.generate_public_key private_key
   puts "public_key.x: #{public_key.x}"
   puts "public_key.y: #{public_key.y}"
-  
+
   message = 'ruby'
-  hash = Stribog::CreateHash.new(message).(size).dec
+  hash = Stribog::CreateHash.new(message.reverse).(size).dec
   puts "hash: #{hash}"
-  
-  signature = CryptoGost3410::Generator.new(hash, group).(private_key) 
+
+  signature = CryptoGost3410::Generator.new(hash, group).(private_key)
   # signature = CryptoGost3410::Generator.new(hash, group).call(private_key)
   puts "signature.r: #{signature.r}"
   puts "signature.s: #{signature.s}"
@@ -59,6 +61,10 @@ List of added elliptic curves:
   Gost512tc26B
   Gost512tc26C
 
+=== Thanks
+
+Thanks to WildDima for root crypto_gost project on GitHub at https://github.com/wilddima/crypto_gost.
+
 === Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/vblazhnovgit/crypto_gost3410. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
@@ -67,4 +73,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/vblazh
 === License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
