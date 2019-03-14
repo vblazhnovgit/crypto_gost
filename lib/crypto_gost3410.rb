@@ -4,11 +4,11 @@
 module CryptoGost3410
 
   require 'securerandom'
-  require_relative 'crypto_gost3410/version'
-  require_relative 'crypto_gost3410/generator'
-  require_relative 'crypto_gost3410/verifier'
-  require_relative 'crypto_gost3410/signature'
-  require_relative 'crypto_gost3410/point'
-  require_relative 'crypto_gost3410/group'
-  require_relative 'crypto_gost3410/modular_arithmetic'
+  require 'crypto_gost3410/version'
+  require 'crypto_gost3410/generator'
+  require 'crypto_gost3410/verifier'
+  require 'crypto_gost3410/signature'
+  require 'crypto_gost3410/point'
+  require 'crypto_gost3410/group'
+  require 'crypto_gost3410/modular_arithmetic'
 end

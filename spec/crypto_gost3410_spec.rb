@@ -1,4 +1,4 @@
-require_relative './spec_helper'
+require 'spec_helper'
 
 describe CryptoGost3410 do
   it 'has a version number' do
