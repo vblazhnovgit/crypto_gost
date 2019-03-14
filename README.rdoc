@@ -1,16 +1,12 @@
-== CryptoGost
+== CryptoGost3410
 
-{<img src="https://travis-ci.org/WildDima/crypto_gost.svg?branch=master"
-alt="Build Status" />}[https://travis-ci.org/WildDima/crypto_gost]
-
-Ruby library implementing GOST 34.10-12 ECC (not production ready)
+Ruby library implementing GOST 34.10-2012 ECC
 
 === Installation
 
 Add this line to your application's Gemfile:
 
-  gem 'crypto_gost'
-
+  gem 'crypto_gost3410'
 
 And then execute:
 
@@ -18,49 +14,54 @@ And then execute:
 
 Or install it yourself as:
 
-  $ gem install crypto_gost
+  $ gem install crypto_gost3410
 
 === Usage
 
-  group = CryptoGost::Group::Nistp192
+  # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
+  # As so, Stribog message hash should be converted to big number too.
+  
+  require 'stribog'
+  require 'crypto_gost3410'
+  
+  group = CryptoGost3410::Group::Gost256cpA
+  if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
+  
   private_key = group.generate_private_key
+  puts "private_key: #{private_key}"
+  
   public_key = group.generate_public_key private_key
+  puts "public_key.x: #{public_key.x}"
+  puts "public_key.y: #{public_key.y}"
+  
   message = 'ruby'
+  hash = Stribog::CreateHash.new(message).(size).dec
+  puts "hash: #{hash}"
+  
+  signature = CryptoGost3410::Generator.new(hash, group).(private_key) 
+  # signature = CryptoGost3410::Generator.new(hash, group).call(private_key)
+  puts "signature.r: #{signature.r}"
+  puts "signature.s: #{signature.s}"
 
-  signature = CryptoGost::Create.new(message, group).(private_key) #=> #<CryptoGost::Signature:0x007fbf1a128e38 @r=797072555870978995277638382002810748614228757069663574432, @s=3005972168119503640451023541340174801109033211348956501476>
-
-  # signature = CryptoGost::Create.new(message, group).call(private_key)
-
-  CryptoGost::Verify.new(message, group).(public_key, signature) # => true
-
-  # CryptoGost::Verify.new(message, group).call(public_key, signature)
+  signature_ok = CryptoGost3410::Verifier.new(hash, group).(public_key, signature)
+  # CryptoGost3410::Verifier.new(hash, group).call(public_key, signature)
+  puts "signature_ok: #{signature_ok}"
 
 List of added elliptic curves:
 
-  Nistp192
-  Nistp224
-  Nistp256
-  Nistp384
-  Nistp521
-  Secp112r1
-  Secp112r2
-  Secp128r1
-  Secp128r2
-  Secp160k1
-  Secp160r1
-  Secp160r2
-  Secp192k1
-  Secp192r1
-  Secp224k1
-  Secp224r1
-  Secp256k1
-  Secp256r1
-  Secp384r1
-  Secp521r1
+  Gost256test
+  Gost256cpA
+  Gost256cpB
+  Gost256cpC
+  Gost256tc26A
+  Gost512test
+  Gost512tc26A
+  Gost512tc26B
+  Gost512tc26C
 
 === Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/wilddima/crypto_gost. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/vblazhnovgit/crypto_gost3410. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 === License

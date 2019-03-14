@@ -1,4 +1,4 @@
-module CryptoGost
+module CryptoGost3410
   # ModularArithmetic
   #
   # Take this code from here: https://gist.github.com/jingoro/2388745

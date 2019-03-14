@@ -1,7 +1,7 @@
-module CryptoGost
+module CryptoGost3410
   # Group
   #
-  # @author WildDima
+  # @author vblazhnovgit
   class Group
     attr_reader :opts, :generator, :a, :b, :gx, :gy, :order, :p
 
@@ -15,30 +15,19 @@ module CryptoGost
       @gy = opts[:gy]
       @order = opts[:n]
       @cofactor = opts[:h]
-      @generator = CryptoGost::Point.new self, [gx, gy]
+      @generator = CryptoGost3410::Point.new self, [gx, gy]
     end
 
     NAMES = %w(
-      Nistp192
-      Nistp224
-      Nistp256
-      Nistp384
-      Nistp521
-      Secp112r1
-      Secp112r2
-      Secp128r1
-      Secp128r2
-      Secp160k1
-      Secp160r1
-      Secp160r2
-      Secp192k1
-      Secp192r1
-      Secp224k1
-      Secp224r1
-      Secp256k1
-      Secp256r1
-      Secp384r1
-      Secp521r1
+      Gost256test
+      Gost256cpA
+      Gost256cpB
+      Gost256cpC
+      Gost256tc26A
+      Gost512test
+      Gost512tc26A
+      Gost512tc26B
+      Gost512tc26C
     ).freeze
 
     NAMES.each do |name|

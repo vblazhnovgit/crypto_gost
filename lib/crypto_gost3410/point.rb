@@ -1,4 +1,4 @@
-module CryptoGost
+module CryptoGost3410
   # EllipticCurvePoint
   #
   # author WildDima

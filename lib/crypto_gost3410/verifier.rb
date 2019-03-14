@@ -1,20 +1,18 @@
-module CryptoGost
+module CryptoGost3410
   # DigitalSignature
   #
-  # @author WildDima
-  class Verify
+  # @author vblazhnovgit
+  class Verifier
     attr_reader :group, :public_key, :create_hash, :message
 
-    def initialize(message, group, create_hash = Stribog::CreateHash)
-      @message = message
+    def initialize(hash, group)
+      @hash = hash
       @group = group
-      @create_hash = create_hash
     end
 
     def call(public_key, sign)
       @public_key = public_key
       @sign = sign
-      @hashed_message = hash_message(@message, size: 256)
       r = sign.r
       s = sign.s
       return false if invalid_vector?(r) || invalid_vector?(s)
@@ -22,15 +20,6 @@ module CryptoGost
     end
 
     private
-
-    def hash_message(message, size: 256)
-      create_hash.new(message).(size)
-    end
-
-    def hash_mod_ecn
-      hashed = hash_message(message, size: 256).dec
-      hashed.zero? ? 1 : hashed
-    end
 
     def mod_inv(opt, mod)
       ModularArithmetic.invert(opt, mod)
@@ -45,7 +34,7 @@ module CryptoGost
     end
 
     def z_param(param)
-      param * mod_inv(hash_mod_ecn, group.order) %
+      param * mod_inv(@hash, group.order) %
         group.order
     end
 

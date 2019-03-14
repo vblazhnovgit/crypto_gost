@@ -1,15 +1,13 @@
-module CryptoGost
+module CryptoGost3410
   # DigitalSignature
   #
-  # @author WildDima
-  class Create
+  # @author vblazhnovgit
+  class Generator
     attr_reader :group, :public_key, :signature_adapter, :create_hash
 
-    def initialize(message, group, signature_adapter: Signature,
-                                   create_hash: Stribog::CreateHash)
+    def initialize(hash, group, signature_adapter: Signature)
       @signature_adapter = signature_adapter
-      @create_hash = create_hash
-      @message = message
+      @hash = hash
       @group = group
     end
 
@@ -25,30 +23,18 @@ module CryptoGost
 
     private
 
-    def hash_message(message, size: 256)
-      new_hash(message, size: size)
-    end
-
     def r_func(rand_val)
       (group.generator * rand_val).x % group.order
     end
 
     def s_func(rand_val, private_key)
-      (r_func(rand_val) * private_key + rand_val * hash_mod_ecn) %
+      (r_func(rand_val) * private_key + rand_val * @hash) %
         group.order
-    end
-
-    def hash_mod_ecn
-      hashed = hash_message(@message, size: 256).dec
-      hashed.zero? ? 1 : hashed
     end
 
     def new_signature(keys)
       signature_adapter.new(r: keys[:r], s: keys[:s])
     end
 
-    def new_hash(message, size: 256)
-      create_hash.new(message).(size)
-    end
   end
 end
