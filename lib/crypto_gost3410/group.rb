@@ -39,7 +39,12 @@ module CryptoGost3410
     end
 
     def generate_private_key
-      1 + SecureRandom.random_number(order - 1)
+      r = 0
+      loop do
+        r = SecureRandom.random_number(order)
+        break if r > 0
+      end  
+      r
     end
   end
 end

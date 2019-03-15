@@ -25,7 +25,8 @@ describe CryptoGost3410 do
         let(:size) { if name.start_with?("Gost512") then 512 else 256 end }
         let(:hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
         let(:generator) { CryptoGost3410::Generator.new(hash, group) }
-        let(:signature) { generator.(private_key) }
+        let(:rand_val) { group.generate_private_key }
+        let(:signature) { generator.(private_key, rand_val) }
         let(:verifier) { CryptoGost3410::Verifier.new(hash, group) }
 
         it 'has valid sign' do

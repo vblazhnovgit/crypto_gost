@@ -11,25 +11,32 @@ module CryptoGost3410
       @group = group
     end
 
-    def call(private_key)
+    def call(private_key, rand_val)
       @private_key = private_key
+      @rnd = rand_val
       loop do
-        rand_val = SecureRandom.random_number(1..group.order)
-        r = r_func(rand_val)
-        s = s_func(rand_val, private_key)
-        break new_signature(r: r, s: s) if !r.zero? || !s.zero?
+        #rand_val = SecureRandom.random_number(group.order)
+        #puts "    \"#{rand_val.to_s(16)}\","
+        @r = r_func()
+        s = s_func()
+        break new_signature(r: @r, s: s) if !@r.zero? || !s.zero?
       end
     end
 
     private
 
-    def r_func(rand_val)
-      (group.generator * rand_val).x % group.order
+    def r_func()
+      (group.generator * @rnd).x % group.order
     end
 
-    def s_func(rand_val, private_key)
-      (r_func(rand_val) * private_key + rand_val * @hash) %
-        group.order
+    def s_func()
+      mm = @hash % group.order
+      if mm == 0 then mm = 1 end
+      ii = (@rnd * mm) % group.order
+      nn = (@r * @private_key) % group.order
+      (nn + ii) % group.order
+      #(r_func(rand_val) * private_key + rand_val * @hash) %
+      #  group.order
     end
 
     def new_signature(keys)
