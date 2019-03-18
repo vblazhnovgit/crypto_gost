@@ -96,11 +96,9 @@ Or install it yourself as:
   
 === Testing
 
-Run:
+Run to call signature test:
  
 $ bundle exec rake spec
-
-to call signature test.
  
 === Thanks
 
