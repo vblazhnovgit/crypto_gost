@@ -3,20 +3,18 @@ module CryptoGost3410
   #
   # @author vblazhnovgit
   class Verifier
-    attr_reader :group, :public_key, :create_hash, :message
+    attr_reader :group
 
-    def initialize(hash, group)
-      @hash = hash
+    def initialize(group)
       @group = group
     end
 
-    def call(public_key, sign)
+    def verify(hash, public_key, signature)
       @public_key = public_key
-      @sign = sign
-      r = sign.r
-      s = sign.s
+      r = signature.x
+      s = signature.y
       return false if invalid_vector?(r) || invalid_vector?(s)
-      (c_param(r, s).x % group.order) == r
+      (c_param(hash, public_key, r, s).x % group.order) == r
     end
 
     private
@@ -33,13 +31,12 @@ module CryptoGost3410
       !valid_vector?(vector)
     end
 
-    def z_param(param)
-      param * mod_inv(@hash, group.order) %
-        group.order
+    def z_param(hash, param)
+      (param * mod_inv(hash, group.order)) % group.order
     end
 
-    def c_param(r, s)
-      group.generator * z_param(s) + public_key * z_param(-r)
+    def c_param(hash, public_key, r, s)
+      group.generator * z_param(hash, s) + public_key * z_param(hash, -r)
     end
   end
 end

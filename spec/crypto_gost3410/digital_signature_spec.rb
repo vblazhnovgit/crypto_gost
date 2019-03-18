@@ -29,7 +29,7 @@ describe CryptoGost3410 do
         let(:signature) { generator.sign(hash, private_key, rand_val) }
         let(:verifier) { CryptoGost3410::Verifier.new(group) }
 
-        it 'has valid sign' do
+        it 'has valid signature' do
           expect(verifier.verify(hash, public_key, signature)).to be_truthy
         end
 
@@ -38,7 +38,7 @@ describe CryptoGost3410 do
           let(:another_hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
           let(:verifier) { CryptoGost3410::Verifier.new(group) }
 
-          it 'has invalid sign' do
+          it 'has invalid signature' do
             expect(verifier.verify(another_hash, public_key, signature)).to be_falsy
           end
         end

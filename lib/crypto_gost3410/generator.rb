@@ -3,7 +3,7 @@ module CryptoGost3410
   #
   # @author vblazhnovgit
   class Generator
-    attr_reader :group, :public_key
+    attr_reader :group
 
     def initialize(group)
       @group = group
@@ -13,11 +13,14 @@ module CryptoGost3410
       @hash = hash
       @private_key = private_key
       @rnd = rand_val
-      loop do
-        @r = r_func()
-        s = s_func()
-        break Point.new(x: @r, y: s) if !@r.zero? || !s.zero?
-      end
+      @r = r_func()
+      s = s_func()
+      CryptoGost3410::Point.new self, [@r, s]
+    end
+    
+    def vko(ukm, private_key, other_public_key)
+      n = (group.opts[:h] * private_key * ukm) % group.order
+      other_public_key * n
     end
 
     private
@@ -30,10 +33,6 @@ module CryptoGost3410
      (@r * @private_key + @rnd * @hash) % group.order
     end
 
-    def vko(ukm, private_key, other_public_key)
-      n = (group.cofactor * private_key * ukm) % group.order
-      other_public_key * n
-    end
     
   end
 end
