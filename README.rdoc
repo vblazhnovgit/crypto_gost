@@ -1,6 +1,6 @@
 == CryptoGost3410
 
-Ruby library implementing GOST 34.10-2012 ECC signature algorithms.
+Ruby library implementing GOST 34.10-2012 ECC signature and VKO algorithms.
 Forked from https://github.com/wilddima/crypto_gost.
 
 === Installation
@@ -18,15 +18,14 @@ Or install it yourself as:
   $ gem install crypto_gost3410
 
 === Usage
-
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
   # As so, input Stribog message hash should be converted to big number too.
   # We removed SecureRandom random number generations out of module to use any external generator. 
   # Note: You need to reverse input/output bytes for Stribog gem to get right GOST 3411-2012 digest.
 
   require 'stribog'
-  require 'crypto_gost3410'
   require 'securerandom'
+  require 'crypto_gost3410'
 
   group = CryptoGost3410::Group::Gost256cpA
   if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
@@ -40,6 +39,8 @@ Or install it yourself as:
   puts "public_key.x: #{public_key.x.to_s(16)}"
   puts "public_key.y: #{public_key.y.to_s(16)}"
 
+  # Signature:
+  
   message = 'ruby'
   hash = Stribog::CreateHash.new(message.reverse).(size).dec
   puts "hash: #{hash.to_s(16)}"
@@ -56,6 +57,30 @@ Or install it yourself as:
   signature_ok = CryptoGost3410::Verifier.new(group).verify(hash, public_key, signature)
   puts "signature_ok: #{signature_ok}"
 
+  # VKO:
+  
+  receiver_private_key = SecureRandom.random_number(1..group.order-1) 
+  puts "receiver_private_key: #{receiver_private_key.to_s(16)}"
+
+  receiver_public_key = group.generate_public_key receiver_private_key
+  puts "receiver_public_key.x: #{receiver_public_key.x.to_s(16)}"
+  puts "receiver_public_key.y: #{receiver_public_key.y.to_s(16)}"
+
+  # ukm is random number 2**64<=ukm<2**256
+  # we use fixed number for debugging
+  ukm = SecureRandom.random_number(2**64..2**256)
+  puts "ukm: #{ukm.to_s(16)}"
+  
+  sender_vko = CryptoGost3410::Generator.new(group).vko(ukm, private_key, receiver_public_key)
+  puts "sender_vko.x: #{sender_vko.x.to_s(16)}"
+  puts "sender_vko.y: #{sender_vko.y.to_s(16)}"
+
+  receiver_vko = CryptoGost3410::Generator.new(group).vko(ukm, receiver_private_key, public_key)
+  puts "receiver_vko.x: #{receiver_vko.x.to_s(16)}"
+  puts "receiver_vko.y: #{receiver_vko.y.to_s(16)}"
+
+  puts "vko_ok: #{(sender_vko.x == receiver_vko.x) && (sender_vko.y == receiver_vko.y)}"
+  
 List of added elliptic curves:
 
   Gost256test

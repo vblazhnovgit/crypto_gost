@@ -32,7 +32,7 @@ describe CryptoGost3410 do
         it 'has valid signature' do
           expect(verifier.verify(hash, public_key, signature)).to be_truthy
         end
-
+        
         context 'change message' do
           let(:another_message) { Faker::Lorem.sentence(2) }
           let(:another_hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
