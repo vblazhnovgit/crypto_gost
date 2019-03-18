@@ -2,7 +2,6 @@
 #
 # @author vblazhnovgit
 module CryptoGost3410
-
   require 'securerandom'
   require 'crypto_gost3410/version'
   require 'crypto_gost3410/generator'

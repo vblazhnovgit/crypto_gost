@@ -18,6 +18,7 @@ Or install it yourself as:
   $ gem install crypto_gost3410
 
 === Usage
+
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
   # As so, input Stribog message hash should be converted to big number too.
   # We removed SecureRandom random number generations out of module to use any external generator. 
@@ -81,7 +82,7 @@ Or install it yourself as:
 
   puts "vko_ok: #{(sender_vko.x == receiver_vko.x) && (sender_vko.y == receiver_vko.y)}"
   
-List of added elliptic curves:
+=== List of added GOST 34.10-2012 elliptic curves:
 
   Gost256test
   Gost256cpA
@@ -92,7 +93,15 @@ List of added elliptic curves:
   Gost512tc26A
   Gost512tc26B
   Gost512tc26C
+  
+=== Testing
 
+Run:
+ 
+$ bundle exec rake spec
+
+to call signature test.
+ 
 === Thanks
 
 Thanks to WildDima for root crypto_gost project on GitHub at https://github.com/wilddima/crypto_gost.

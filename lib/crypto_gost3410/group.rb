@@ -18,7 +18,7 @@ module CryptoGost3410
       @generator = CryptoGost3410::Point.new self, [gx, gy]
     end
 
-    NAMES = %w(
+    NAMES = %w[
       Gost256test
       Gost256cpA
       Gost256cpB
@@ -28,7 +28,7 @@ module CryptoGost3410
       Gost512tc26A
       Gost512tc26B
       Gost512tc26C
-    ).freeze
+    ].freeze
 
     NAMES.each do |name|
       require_relative "./group/#{name.downcase}"
@@ -38,8 +38,5 @@ module CryptoGost3410
       generator * private_key
     end
 
-#    def generate_random
-#      SecureRandom.random_number(1..order)
-#    end
   end
 end

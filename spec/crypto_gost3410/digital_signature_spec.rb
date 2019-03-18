@@ -4,7 +4,7 @@ require 'stribog'
 
 describe CryptoGost3410 do
   context 'elliptic curve signature' do
-    NAMES = %w(
+    NAMES = %w[
       Gost256test
       Gost256cpA
       Gost256cpB
@@ -14,7 +14,7 @@ describe CryptoGost3410 do
       Gost512tc26A
       Gost512tc26B
       Gost512tc26C
-      ).freeze
+      ].freeze
 
     NAMES.each do |name|
       context name do
@@ -22,7 +22,7 @@ describe CryptoGost3410 do
         let(:private_key) { SecureRandom.random_number(1..group.order-1) }
         let(:public_key) { group.generate_public_key private_key }
         let(:message) { Faker::Lorem.sentence(3) }
-        let(:size) { if name.start_with?("Gost512") then 512 else 256 end }
+        let(:size) { if name.start_with?('Gost512') then 512 else 256 end }
         let(:hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
         let(:generator) { CryptoGost3410::Generator.new(group) }
         let(:rand_val) { SecureRandom.random_number(1..group.order-1) }
@@ -35,7 +35,7 @@ describe CryptoGost3410 do
         
         context 'change message' do
           let(:another_message) { Faker::Lorem.sentence(2) }
-          let(:another_hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
+          let(:another_hash) { Stribog::CreateHash.new(another_message.reverse).(size).dec }
           let(:verifier) { CryptoGost3410::Verifier.new(group) }
 
           it 'has invalid signature' do
