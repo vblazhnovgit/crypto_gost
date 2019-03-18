@@ -38,13 +38,8 @@ module CryptoGost3410
       generator * private_key
     end
 
-    def generate_private_key
-      r = 0
-      loop do
-        r = SecureRandom.random_number(order)
-        break if r > 0
-      end  
-      r
-    end
+#    def generate_random
+#      SecureRandom.random_number(1..order)
+#    end
   end
 end

@@ -19,27 +19,27 @@ describe CryptoGost3410 do
     NAMES.each do |name|
       context name do
         let(:group) { Object.const_get("CryptoGost3410::Group::#{name}") }
-        let(:private_key) { group.generate_private_key }
+        let(:private_key) { SecureRandom.random_number(1..group.order-1) }
         let(:public_key) { group.generate_public_key private_key }
         let(:message) { Faker::Lorem.sentence(3) }
         let(:size) { if name.start_with?("Gost512") then 512 else 256 end }
         let(:hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
-        let(:generator) { CryptoGost3410::Generator.new(hash, group) }
-        let(:rand_val) { group.generate_private_key }
-        let(:signature) { generator.(private_key, rand_val) }
-        let(:verifier) { CryptoGost3410::Verifier.new(hash, group) }
+        let(:generator) { CryptoGost3410::Generator.new(group) }
+        let(:rand_val) { SecureRandom.random_number(1..group.order-1) }
+        let(:signature) { generator.sign(hash, private_key, rand_val) }
+        let(:verifier) { CryptoGost3410::Verifier.new(group) }
 
         it 'has valid sign' do
-          expect(verifier.(public_key, signature)).to be_truthy
+          expect(verifier.verify(hash, public_key, signature)).to be_truthy
         end
 
         context 'change message' do
           let(:another_message) { Faker::Lorem.sentence(2) }
           let(:another_hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
-          let(:verifier) { CryptoGost3410::Verifier.new(another_hash, group) }
+          let(:verifier) { CryptoGost3410::Verifier.new(group) }
 
           it 'has invalid sign' do
-            expect(verifier.(public_key, signature)).to be_falsy
+            expect(verifier.verify(another_hash, public_key, signature)).to be_falsy
           end
         end
       end

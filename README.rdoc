@@ -20,33 +20,40 @@ Or install it yourself as:
 === Usage
 
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
-  # As so, input Stribog message hash shoud be converted to big number too.
+  # As so, input Stribog message hash should be converted to big number too.
+  # We removed SecureRandom random number generations out of module to use any external generator. 
   # Note: You need to reverse input/output bytes for Stribog gem to get right GOST 3411-2012 digest.
 
   require 'stribog'
   require 'crypto_gost3410'
+  require 'securerandom'
 
   group = CryptoGost3410::Group::Gost256cpA
   if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
-
-  private_key = group.generate_private_key
-  puts "private_key: #{private_key}"
+  
+  # private_key is random number 0<n<group.order
+  # you can use fixed number for debugging
+  private_key = SecureRandom.random_number(1..group.order-1) 
+  puts "private_key: #{private_key.to_s(16)}"
 
   public_key = group.generate_public_key private_key
-  puts "public_key.x: #{public_key.x}"
-  puts "public_key.y: #{public_key.y}"
+  puts "public_key.x: #{public_key.x.to_s(16)}"
+  puts "public_key.y: #{public_key.y.to_s(16)}"
 
   message = 'ruby'
   hash = Stribog::CreateHash.new(message.reverse).(size).dec
-  puts "hash: #{hash}"
+  puts "hash: #{hash.to_s(16)}"
 
-  signature = CryptoGost3410::Generator.new(hash, group).(private_key)
-  # signature = CryptoGost3410::Generator.new(hash, group).call(private_key)
-  puts "signature.r: #{signature.r}"
-  puts "signature.s: #{signature.s}"
+  # rnd_val is random number 0<n<group.order so as private_key
+  # you can use fixed number for debugging
+  rand_val = SecureRandom.random_number(1..group.order-1)
+  puts "rand_val: #{rand_val.to_s(16)}"
+  
+  signature = CryptoGost3410::Generator.new(group).sign(hash, private_key, rand_val)
+  puts "signature.x: #{signature.x.to_s(16)}"   # x stands for r
+  puts "signature.y: #{signature.y.to_s(16)}"   # y stands for s
 
-  signature_ok = CryptoGost3410::Verifier.new(hash, group).(public_key, signature)
-  # CryptoGost3410::Verifier.new(hash, group).call(public_key, signature)
+  signature_ok = CryptoGost3410::Verifier.new(group).verify(hash, public_key, signature)
   puts "signature_ok: #{signature_ok}"
 
 List of added elliptic curves:

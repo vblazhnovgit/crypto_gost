@@ -3,23 +3,20 @@ module CryptoGost3410
   #
   # @author vblazhnovgit
   class Generator
-    attr_reader :group, :public_key, :signature_adapter, :create_hash
+    attr_reader :group, :public_key
 
-    def initialize(hash, group, signature_adapter: Signature)
-      @signature_adapter = signature_adapter
-      @hash = hash
+    def initialize(group)
       @group = group
     end
 
-    def call(private_key, rand_val)
+    def sign(hash, private_key, rand_val)
+      @hash = hash
       @private_key = private_key
       @rnd = rand_val
       loop do
-        #rand_val = SecureRandom.random_number(group.order)
-        #puts "    \"#{rand_val.to_s(16)}\","
         @r = r_func()
         s = s_func()
-        break new_signature(r: @r, s: s) if !@r.zero? || !s.zero?
+        break Point.new(x: @r, y: s) if !@r.zero? || !s.zero?
       end
     end
 
@@ -30,18 +27,13 @@ module CryptoGost3410
     end
 
     def s_func()
-      mm = @hash % group.order
-      if mm == 0 then mm = 1 end
-      ii = (@rnd * mm) % group.order
-      nn = (@r * @private_key) % group.order
-      (nn + ii) % group.order
-      #(r_func(rand_val) * private_key + rand_val * @hash) %
-      #  group.order
+     (@r * @private_key + @rnd * @hash) % group.order
     end
 
-    def new_signature(keys)
-      signature_adapter.new(r: keys[:r], s: keys[:s])
+    def vko(ukm, private_key, other_public_key)
+      n = (group.cofactor * private_key * ukm) % group.order
+      other_public_key * n
     end
-
+    
   end
 end
