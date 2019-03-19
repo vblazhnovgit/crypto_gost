@@ -5,15 +5,15 @@ require 'stribog'
 describe CryptoGost3410 do
   context 'elliptic curve signature' do
     NAMES = %w[
-      Gost256test
-      Gost256cpA
-      Gost256cpB
-      Gost256cpC
-      Gost256tc26A
-      Gost512test
-      Gost512tc26A
-      Gost512tc26B
-      Gost512tc26C
+      Gost256tc26test
+      Gost256tc26a
+      Gost256tc26b
+      Gost256tc26c
+      Gost256tc26d
+      Gost512tc26test
+      Gost512tc26a
+      Gost512tc26b
+      Gost512tc26c
       ].freeze
 
     NAMES.each do |name|

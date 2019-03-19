@@ -28,7 +28,10 @@ Or install it yourself as:
   require 'securerandom'
   require 'crypto_gost3410'
 
-  group = CryptoGost3410::Group::Gost256cpA
+  group = CryptoGost3410::Group::Gost256tc26a
+  puts group.opts[:name]
+  puts group.opts[:id]
+  puts group.opts[:oid]
   if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
   
   # private_key is random number 0<n<group.order
@@ -84,19 +87,19 @@ Or install it yourself as:
   
 === List of added GOST 34.10-2012 elliptic curves:
 
-  Gost256test
-  Gost256cpA
-  Gost256cpB
-  Gost256cpC
-  Gost256tc26A
-  Gost512test
-  Gost512tc26A
-  Gost512tc26B
-  Gost512tc26C
+  Gost256tc26test - use for testing only! Former id-GostR3410-2001-TestParamSet
+  Gost256tc26a
+  Gost256tc26b    - former id-GostR3410-2001-CryptoPro-A-ParamSet
+  Gost256tc26c    - former id-GostR3410-2001-CryptoPro-B-ParamSet
+  Gost256tc26d    - former id-GostR3410-2001-CryptoPro-C-ParamSet
+  Gost512test     - use for testing only!
+  Gost512tc26a
+  Gost512tc26b
+  Gost512tc26c
   
 === Testing
 
-Run to call signature test:
+Run to call signature test from source project directory:
  
 $ bundle exec rake spec
  
