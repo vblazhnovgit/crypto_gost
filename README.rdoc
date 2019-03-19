@@ -17,6 +17,10 @@ Or install it yourself as:
 
   $ gem install crypto_gost3410
 
+Or install it locally from source crypto_gost3410 project directory
+
+  $ bundle exec rake install
+  
 === Usage
 
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
@@ -102,7 +106,7 @@ Or install it yourself as:
   
 === Testing
 
-Run to call signature test from source project directory:
+Run spec test from crypto_gost3410 source project directory:
  
 $ bundle exec rake spec
  
