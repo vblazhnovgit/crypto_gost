@@ -1,7 +1,7 @@
 module CryptoGost3410
   class Group
-    Gost512test = new(
-      name: 'gost512test',
+    Gost512tc26test = new(
+      name: 'gost512tc26test',
       id: 'id-tc26-gost-3410-12-512-paramSetTest',
       oid: '1.2.643.7.1.2.1.2.0',
       p: 0x4531ACD1FE0023C7550D267B6B2FEE80922B14B2FFB90F04D4EB7C09B5D2D15DF1D852741AF4704A0458047E80E4546D35B8336FAC224DD81664BBF528BE6373,
