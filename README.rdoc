@@ -22,7 +22,7 @@ Or install it yourself as:
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
   # As so, input Stribog message hash should be converted to big number too.
   # We removed SecureRandom random number generations out of module to use any external generator. 
-  # Note: You need to reverse input/output bytes for Stribog gem to get right GOST 3411-2012 digest.
+  # Note: You need to reverse input/output bytes for Stribog gem to get correct GOST 3411-2012 digest.
 
   require 'stribog'
   require 'securerandom'
@@ -33,6 +33,9 @@ Or install it yourself as:
   puts group.opts[:id]
   puts group.opts[:oid]
   if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
+ 
+  generator = CryptoGost3410::Generator.new(group)  # for sign and for vko
+  verifier = CryptoGost3410::Verifier.new(group)    # for verify
   
   # private_key is random number 0<n<group.order
   # you can use fixed number for debugging
@@ -54,11 +57,11 @@ Or install it yourself as:
   rand_val = SecureRandom.random_number(1..group.order-1)
   puts "rand_val: #{rand_val.to_s(16)}"
   
-  signature = CryptoGost3410::Generator.new(group).sign(hash, private_key, rand_val)
+  signature = generator.sign(hash, private_key, rand_val)
   puts "signature.x: #{signature.x.to_s(16)}"   # x stands for r
   puts "signature.y: #{signature.y.to_s(16)}"   # y stands for s
 
-  signature_ok = CryptoGost3410::Verifier.new(group).verify(hash, public_key, signature)
+  signature_ok = verifier.new(group).verify(hash, public_key, signature)
   puts "signature_ok: #{signature_ok}"
 
   # VKO:
@@ -75,11 +78,11 @@ Or install it yourself as:
   ukm = SecureRandom.random_number(2**64..2**256)
   puts "ukm: #{ukm.to_s(16)}"
   
-  sender_vko = CryptoGost3410::Generator.new(group).vko(ukm, private_key, receiver_public_key)
+  sender_vko = generator.vko(ukm, private_key, receiver_public_key)
   puts "sender_vko.x: #{sender_vko.x.to_s(16)}"
   puts "sender_vko.y: #{sender_vko.y.to_s(16)}"
 
-  receiver_vko = CryptoGost3410::Generator.new(group).vko(ukm, receiver_private_key, public_key)
+  receiver_vko = generator.vko(ukm, receiver_private_key, public_key)
   puts "receiver_vko.x: #{receiver_vko.x.to_s(16)}"
   puts "receiver_vko.y: #{receiver_vko.y.to_s(16)}"
 
