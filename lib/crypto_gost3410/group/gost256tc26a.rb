@@ -2,7 +2,7 @@ module CryptoGost3410
   class Group
     Gost256tc26a = new(
       name: 'gost256tc26a',
-      id: 'id-tc26-gost-3410-12-256-paramSetA',
+      id: 'id-tc26-gost-3410-2012-256-paramSetA',
       oid: '1.2.643.7.1.2.1.1.1',
       p: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD97,
       a: 0xC2173F1513981673AF4892C23035A27CE25E2013BF95AA33B22C656F277E7335,

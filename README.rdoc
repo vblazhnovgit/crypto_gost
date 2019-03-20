@@ -92,17 +92,17 @@ Or install it locally from source crypto_gost3410 project directory
 
   puts "vko_ok: #{(sender_vko.x == receiver_vko.x) && (sender_vko.y == receiver_vko.y)}"
   
-=== List of added GOST 34.10-2012 elliptic curves:
+=== List of TC 26 GOST 34.10-2012 elliptic curves:
 
-  Gost256tc26test - use for testing only! Former id-GostR3410-2001-TestParamSet
-  Gost256tc26a
-  Gost256tc26b    - former id-GostR3410-2001-CryptoPro-A-ParamSet
-  Gost256tc26c    - former id-GostR3410-2001-CryptoPro-B-ParamSet
-  Gost256tc26d    - former id-GostR3410-2001-CryptoPro-C-ParamSet
-  Gost512test     - use for testing only!
-  Gost512tc26a
-  Gost512tc26b
-  Gost512tc26c
+  Gost256tc26test - id-tc26-gost-3410-2012-256-paramSetTest (former id-GostR3410-2001-TestParamSet). Use for testing only!
+  Gost256tc26a    - id-tc26-gost-3410-2012-256-paramSetA
+  Gost256tc26b    - id-tc26-gost-3410-2012-256-paramSetA (former id-GostR3410-2001-CryptoPro-A-ParamSet)
+  Gost256tc26c    - id-tc26-gost-3410-2012-256-paramSetC (former id-GostR3410-2001-CryptoPro-B-ParamSet)
+  Gost256tc26d    - id-tc26-gost-3410-2012-256-paramSetD (former id-GostR3410-2001-CryptoPro-C-ParamSet)
+  Gost512test     - id-tc26-gost-3410-2012-512-paramSetTest. Use for testing only!
+  Gost512tc26a    - id-tc26-gost-3410-2012-512-paramSetA
+  Gost512tc26b    - id-tc26-gost-3410-2012-512-paramSetB
+  Gost512tc26c    - id-tc26-gost-3410-2012-512-paramSetC
   
 === Testing
 

@@ -2,8 +2,8 @@ module CryptoGost3410
   class Group
     Gost256tc26b = new(
       name: 'gost256tc26b',
-      id: 'id-tc26-gost-3410-12-256-paramSetB', # former id-GostR3410-2001-CryptoPro-A-ParamSet
-      oid: '1.2.643.7.1.2.1.1.2',               # former 1.2.643.2.2.35.1
+      id: 'id-tc26-gost-3410-2012-256-paramSetB', # former id-GostR3410-2001-CryptoPro-A-ParamSet
+      oid: '1.2.643.7.1.2.1.1.2',                 # former 1.2.643.2.2.35.1
       p: 115792089237316195423570985008687907853269984665640564039457584007913129639319,
       a: 115792089237316195423570985008687907853269984665640564039457584007913129639316,
       b: 166,
