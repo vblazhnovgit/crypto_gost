@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'securerandom'
-require 'stribog'
+require 'crypto_gost3411'
 
 describe CryptoGost3410 do
   context 'crypto_gost3410' do
@@ -23,13 +23,16 @@ describe CryptoGost3410 do
         let(:public_key) { group.generate_public_key private_key }
         let(:message) { Faker::Lorem.sentence(3) }
         let(:size) { if name.start_with?('Gost512') then 512 else 256 end }
-        let(:hash) { Stribog::CreateHash.new(message.reverse).(size).dec }
+        let(:unpack_format) { if name.start_with?('Gost512') then 'Q*' else 'L*' end}
+        let(:digest) { CryptoGost3411::Gost3411.new(size/8).update(message).final }
+        let(:digest_num) { digest.unpack(unpack_format)[0] }
         let(:generator) { CryptoGost3410::Generator.new(group) }
         let(:rand_val) { SecureRandom.random_number(1..group.order-1) }
-        let(:signature) { generator.sign(hash, private_key, rand_val) }
+        let(:signature) { generator.sign(digest_num, private_key, rand_val) }
         let(:verifier) { CryptoGost3410::Verifier.new(group) }
         let(:another_message) { Faker::Lorem.sentence(2) }
-        let(:another_hash) { Stribog::CreateHash.new(another_message.reverse).(size).dec }
+        let(:another_digest) { CryptoGost3411::Gost3411.new(size/8).update(another_message).final}
+        let(:another_digest_num) { another_digest.unpack(unpack_format)[0] }
         let(:receiver_private_key) { SecureRandom.random_number(1..group.order-1) }
         let(:receiver_public_key) { group.generate_public_key receiver_private_key }
         let(:ukm) { SecureRandom.random_number(2**(size/4)..2**(size/2)-1) }
@@ -37,11 +40,11 @@ describe CryptoGost3410 do
         let(:receiver_vko) { generator.vko(ukm, receiver_private_key, public_key) }
         
         it 'has valid signature' do
-          expect(verifier.verify(hash, public_key, signature)).to be_truthy
+          expect(verifier.verify(digest_num, public_key, signature)).to be_truthy
         end
         
         it 'has invalid signature for changed message' do
-           expect(verifier.verify(another_hash, public_key, signature)).to be_falsy
+           expect(verifier.verify(another_digest_num, public_key, signature)).to be_falsy
         end
         
         it 'sender VKO equals to receiver VKO' do

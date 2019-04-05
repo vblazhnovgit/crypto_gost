@@ -24,19 +24,25 @@ Or install it locally from source crypto_gost3410 project directory
 === Usage
 
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
-  # As so, input Stribog message hash should be converted to big number too.
-  # We removed SecureRandom random number generations out of module to use any external generator. 
-  # Note: You need to reverse input/output bytes for Stribog gem to get correct GOST 3411-2012 digest.
+  # As so, input CryptoGost3411 message digest should be converted to big number too.
+  # We removed SecureRandom random number generations out of module to use any external generator.
+  # In version 0.2.0 tests we use crypto_gost3411 gem instead of stribog gem for digest generation.  
 
-  require 'stribog'
   require 'securerandom'
+  require 'crypto_gost3411'
   require 'crypto_gost3410'
 
   group = CryptoGost3410::Group::Gost256tc26a
   puts group.opts[:name]
   puts group.opts[:id]
   puts group.opts[:oid]
-  if group.opts[:name].start_with?("Gost512") then size = 512 else size = 256 end
+  if group.opts[:name].start_with?("Gost512") then
+    size = 512
+    unpack_format = 'Q*'
+  else 
+    size = 256 
+    unpack_format = 'L*'
+  end
  
   generator = CryptoGost3410::Generator.new(group)  # for sign and for vko
   verifier = CryptoGost3410::Verifier.new(group)    # for verify
@@ -53,19 +59,20 @@ Or install it locally from source crypto_gost3410 project directory
   # Signature:
   
   message = 'ruby'
-  hash = Stribog::CreateHash.new(message.reverse).(size).dec
-  puts "hash: #{hash.to_s(16)}"
+  digest = CryptoCost3411::Gost3411.new(size/8).update(message).final
+  puts "digest: #{digest.to_s(16)}"
+  digest_num = digest.unpack(unpack_format)[0]
 
   # rnd_val is random number 0<n<group.order so as private_key
   # you can use fixed number for debugging
   rand_val = SecureRandom.random_number(1..group.order-1)
   puts "rand_val: #{rand_val.to_s(16)}"
   
-  signature = generator.sign(hash, private_key, rand_val)
+  signature = generator.sign(digest_num, private_key, rand_val)
   puts "signature.x: #{signature.x.to_s(16)}"   # x stands for r
   puts "signature.y: #{signature.y.to_s(16)}"   # y stands for s
 
-  signature_ok = verifier.new(group).verify(hash, public_key, signature)
+  signature_ok = verifier.new(group).verify(digest, public_key, signature)
   puts "signature_ok: #{signature_ok}"
 
   # VKO:
