@@ -38,10 +38,8 @@ Or install it locally from source crypto_gost3410 project directory
   puts group.opts[:oid]
   if group.opts[:name].start_with?("Gost512") then
     size = 512
-    unpack_format = 'Q*'
   else 
     size = 256 
-    unpack_format = 'L*'
   end
  
   generator = CryptoGost3410::Generator.new(group)  # for sign and for vko
