@@ -61,7 +61,7 @@ Or install it locally from source crypto_gost3410 project directory
   message = 'ruby'
   digest = CryptoCost3411::Gost3411.new(size/8).update(message).final
   puts "digest: #{digest.to_s(16)}"
-  digest_num = digest.unpack(unpack_format)[0]
+  digest_num = digest.reverse.unpack('H*')[0].hex
 
   # rnd_val is random number 0<n<group.order so as private_key
   # you can use fixed number for debugging
@@ -98,6 +98,30 @@ Or install it locally from source crypto_gost3410 project directory
   puts "receiver_vko.y: #{receiver_vko.y.to_s(16)}"
 
   puts "vko_ok: #{(sender_vko.x == receiver_vko.x) && (sender_vko.y == receiver_vko.y)}"
+  
+=== Convert GOST digest, public_key and signature strings to numbers
+
+  require 'crypto_gost3410'
+  require 'crypto_gost3411'
+
+  group = CryptoGost3410::Group::Gost256tc26test  
+  # get tbs, signer public_key and signature strings from certificate
+  # ...
+  # generate digest (32 bytes)
+  digest32 = CryptoGost3411::Gost3411.new(32).update(tbs).final
+  # little-endian digest32 -> reverse -> big-endian -> BigNum
+  digest32_num = digest32.reverse.unpack('H*')[0].hex
+  # public key x||y little-endian -> reverse -> big-endian -> BigNums
+  public_key_x_num = public_key[0...32].reverse.unpack('H*')[0].hex
+  public_key_y_num = public_key[32..-1].reverse.unpack('H*')[0].hex
+  public_key_point = CryptoGost3410::Point.new(group, [public_key_x_num, public_key_y_num])
+  # signature s||r big-endian -> BigNums
+  signature_s_num = signature[0...32].unpack('H*')[0].hex
+  signature_r_num = signature[32..-1].unpack('H*')[0].hex
+  signature_point = CryptoGost3410::Point.new(group, [sig_r_num, sig_s_num]) 
+
+  signature_point_ok = CryptoGost3410::Verifier.new(group).verify(digest32_num, public_key_point, signature_point)
+  puts "signature_point_ok: #{signature_point_ok}"
   
 === List of TC 26 GOST 34.10-2012 elliptic curves:
 
