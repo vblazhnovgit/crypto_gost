@@ -26,7 +26,7 @@ Or install it locally from source crypto_gost3410 project directory
   # All input and output data for CryptoGost3410 are big numbers only, not byte arrays nor strings.
   # As so, input CryptoGost3411 message digest should be converted to big number too.
   # We removed SecureRandom random number generations out of module to use any external generator.
-  # In version 0.2.0 tests we use crypto_gost3411 gem instead of stribog gem for digest generation.  
+  # In version 0.2.1 tests we use crypto_gost3411 gem instead of stribog gem for digest generation.  
 
   require 'securerandom'
   require 'crypto_gost3411'
