@@ -36,11 +36,8 @@ Or install it locally from source crypto_gost3410 project directory
   puts group.opts[:name]
   puts group.opts[:id]
   puts group.opts[:oid]
-  if group.opts[:name].start_with?("Gost512") then
-    size = 512
-  else 
-    size = 256 
-  end
+  
+  coord_size = group.opts[:coord_size] # in bytes
  
   generator = CryptoGost3410::Generator.new(group)  # for sign and for vko
   verifier = CryptoGost3410::Verifier.new(group)    # for verify
@@ -57,8 +54,8 @@ Or install it locally from source crypto_gost3410 project directory
   # Signature:
   
   message = 'ruby'
-  digest = CryptoGost3411::Gost3411.new(size/8).update(message).final
-  CryptoGost3410::Converter.printBytes(digest, 64)   
+  digest = CryptoGost3411::Gost3411.new(coord_size).update(message).final
+  CryptoGost3410::Converter.printBytes(digest, coord_size * 2)   
   digest_num = CryptoGost3410::Converter.bytesToBignum(digest.reverse)
   puts "digest_num: #{digest_num.to_s(16)}"
 
@@ -83,9 +80,8 @@ Or install it locally from source crypto_gost3410 project directory
   puts "receiver_public_key.x: #{receiver_public_key.x.to_s(16)}"
   puts "receiver_public_key.y: #{receiver_public_key.y.to_s(16)}"
 
-  # ukm is random number 2**64<=ukm<2**256
-  # we use fixed number for debugging
-  ukm = SecureRandom.random_number(2**64..2**256)
+  # ukm is random number 2**(coord_size*2)<=ukm<2**(coord_size*8)
+  ukm = SecureRandom.random_number(2**(coord_size*2)..2**(coord_size*8)-1)
   puts "ukm: #{ukm.to_s(16)}"
   
   sender_vko = generator.vko(ukm, private_key, receiver_public_key)
@@ -103,31 +99,33 @@ Or install it locally from source crypto_gost3410 project directory
   require 'crypto_gost3411'
   require 'crypto_gost3410'
 
-  group = CryptoGost3410::Group::Gost256tc26test  
+  group = CryptoGost3410::Group::Gost256tc26test
+  coord_size = group.opts[:coord_size] # in bytes
+  
   # get tbs, signer public_key and signature byte strings from x509 certificate
   # ...
-  # generate digest (32 bytes)
-  digest32 = CryptoGost3411::Gost3411.new(32).update(tbs).final
+  # generate digest
+  digest32 = CryptoGost3411::Gost3411.new(coord_size).update(tbs).final
   # little-endian digest32 -> reverse -> big-endian -> BigNum
   digest32_num = CryptoGost3410::Converter.bytesToBignum(digest32.reverse)
   # public key x||y little-endian -> reverse -> big-endian -> Point(x_num, y_num)
-  public_key_x_num = CryptoGost3410::Converter.bytesToBignum(public_key[0...32].reverse)
-  public_key_y_num = CryptoGost3410::Converter.bytesToBignum(public_key[32..-1].reverse)
+  public_key_x_num = CryptoGost3410::Converter.bytesToBignum(public_key[0...coord_size].reverse)
+  public_key_y_num = CryptoGost3410::Converter.bytesToBignum(public_key[coord_size..-1].reverse)
   public_key_point = CryptoGost3410::Point.new(group, [public_key_x_num, public_key_y_num])
   # signature s||r big-endian -> Point(r_num, s_num)
-  signature_s_num = CryptoGost3410::Converter.bytesToBignum(signature[0...32])
-  signature_r_num = CryptoGost3410::Converter.bytesToBignum(signature[32..-1])
+  signature_s_num = CryptoGost3410::Converter.bytesToBignum(signature[0...coord_size])
+  signature_r_num = CryptoGost3410::Converter.bytesToBignum(signature[coord_size..-1])
   signature_point = CryptoGost3410::Point.new(group, [sig_r_num, sig_s_num]) 
 
   signature_point_ok = CryptoGost3410::Verifier.new(group).verify(digest32_num, public_key_point, signature_point)
   puts "signature_point_ok: #{signature_point_ok}"
   
   # Converting signature point to byte string ( s||r, big-endian):
-  signature_bytes_s = CryptoGost3410::Converter.bignumToBytes(signature_point.x, 32)
-  signature_bytes_r = CryptoGost3410::Converter.bignumToBytes(signature_point.y, 32)
+  signature_bytes_s = CryptoGost3410::Converter.bignumToBytes(signature_point.x, coord_size)
+  signature_bytes_r = CryptoGost3410::Converter.bignumToBytes(signature_point.y, coord_size)
   signature_bytes = signature_bytes_s + signature_bytes_r
   # Print signature bytes in hex (64 symbols in line)
-  CryptoGost3410::Converter.printBytes(signature_bytes, 64) 
+  CryptoGost3410::Converter.printBytes(signature_bytes, coord_size * 2) 
   
 === List of TC 26 GOST 34.10-2012 elliptic curves:
 
@@ -140,6 +138,20 @@ Or install it locally from source crypto_gost3410 project directory
   Gost512tc26a    - id-tc26-gost-3410-2012-512-paramSetA
   Gost512tc26b    - id-tc26-gost-3410-2012-512-paramSetB
   Gost512tc26c    - id-tc26-gost-3410-2012-512-paramSetC (Edwards twisted curve)
+
+  You can find group by name, by id, by oid and by der_oid:
+
+  name = 'Gost256tc26test'
+  group = CryptoGost3410::Group.findByName(name)
+  
+  id = 'id-tc26-gost-3410-2012-256-paramSetTest'
+  group = CryptoGost3410::Group.findById(id)
+  
+  oid = '1.2.643.7.1.2.1.1.0'
+  group = CryptoGost3410::Group.findByOid(oid)
+  
+  der_oid = "\x06\x09\x2a\x85\x03\x07\x01\x02\x01\x01\x00"
+  group = CryptoGost3410::Group.findByDerOid(der_oid)
   
 === Testing
 

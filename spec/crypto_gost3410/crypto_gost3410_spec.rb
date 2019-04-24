@@ -22,22 +22,22 @@ describe CryptoGost3410 do
         let(:private_key) { SecureRandom.random_number(1..group.order-1) }
         let(:public_key) { group.generate_public_key private_key }
         let(:message) { Faker::Lorem.sentence(3) }
-        let(:size) { if name.start_with?('Gost512') then 512 else 256 end }
-        let(:digest) { CryptoGost3411::Gost3411.new(size/8).update(message).final }
-        let(:digest_num) { digest.reverse.unpack('H*')[0].hex }
+        let(:coord_size) { group.opts[:coord_size] }
+        let(:digest) { CryptoGost3411::Gost3411.new(coord_size).update(message).final }
+        let(:digest_num) { CryptoGost3410::Converter.bytesToBignum(digest.reverse) }
         let(:generator) { CryptoGost3410::Generator.new(group) }
         let(:rand_val) { SecureRandom.random_number(1..group.order-1) }
         let(:signature) { generator.sign(digest_num, private_key, rand_val) }
         let(:verifier) { CryptoGost3410::Verifier.new(group) }
         let(:another_message) { Faker::Lorem.sentence(2) }
-        let(:another_digest) { CryptoGost3411::Gost3411.new(size/8).update(another_message).final}
-        let(:another_digest_num) { another_digest.reverse.unpack('H*')[0].hex }
+        let(:another_digest) { CryptoGost3411::Gost3411.new(coord_size).update(another_message).final}
+        let(:another_digest_num) { CryptoGost3410::Converter.bytesToBignum(another_digest.reverse) }
         let(:receiver_private_key) { SecureRandom.random_number(1..group.order-1) }
         let(:receiver_public_key) { group.generate_public_key receiver_private_key }
-        let(:ukm) { SecureRandom.random_number(2**(size/4)..2**(size/2)-1) }
+        let(:ukm) { SecureRandom.random_number(2**(coord_size*2)..2**(coord_size*8)-1) }
         let(:sender_vko) { generator.vko(ukm, private_key, receiver_public_key) }
         let(:receiver_vko) { generator.vko(ukm, receiver_private_key, public_key) }
-        
+       
         it 'find group by der oid' do
           expect(CryptoGost3410::Group.findByDerOid(group.opts[:der_oid]) == group).to be_truthy 
         end

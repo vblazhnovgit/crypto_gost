@@ -8,11 +8,6 @@ module CryptoGost3410
     def initialize(opts)
       @opts = opts
       @name = opts.fetch(:name)
-=begin      
-      @id = opts[:id]
-      @oid = opts[:oid]
-      @der_oid = opts[:der_oid]
-=end      
       @p = opts[:p]
       @a = opts[:a]
       @b = opts[:b]
