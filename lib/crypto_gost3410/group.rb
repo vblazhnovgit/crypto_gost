@@ -42,6 +42,10 @@ module CryptoGost3410
           group = g
           break
         end
+        if (g.opts[:cp_oid] != nil) && (g.opts[:cp_oid] == oid) then
+          group = g
+          break
+        end
       end
       group
     end
@@ -54,6 +58,10 @@ module CryptoGost3410
           group = g
           break
         end
+        if (g.opts[:cp_der_oid] != nil) && (g.opts[:cp_der_oid] == der_oid) then
+          group = g
+          break
+        end
       end
       group
     end
@@ -63,6 +71,10 @@ module CryptoGost3410
       NAMES.each do |n|
         g = Object.const_get("CryptoGost3410::Group::#{n}")
         if g.opts[:id] == id then
+          group = g
+          break
+        end
+        if (g.opts[:cp_id] != nil) && (g.opts[:cp_id] == id) then
           group = g
           break
         end

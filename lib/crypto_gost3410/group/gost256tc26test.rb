@@ -5,6 +5,9 @@ module CryptoGost3410
       id: 'id-tc26-gost-3410-2012-256-paramSetTest',  # former id-GostR3410-2001-TestParamSet
       oid: '1.2.643.7.1.2.1.1.0',                     # former 1.2.643.2.2.35.0
       der_oid: "\x06\x09\x2a\x85\x03\x07\x01\x02\x01\x01\x00",
+      cp_id: 'id-GostR3410-2001-TestParamSet',
+      cp_oid: '1.2.643.2.2.35.0',
+      cp_der_oid: "\x06\x07\x2a\x85\x03\x02\x02\x23\x00", 
       coord_size: 32,
       p: 0x8000000000000000000000000000000000000000000000000000000000000431,
       a: 0x7,
