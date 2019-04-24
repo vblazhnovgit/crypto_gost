@@ -38,6 +38,10 @@ describe CryptoGost3410 do
         let(:sender_vko) { generator.vko(ukm, private_key, receiver_public_key) }
         let(:receiver_vko) { generator.vko(ukm, receiver_private_key, public_key) }
         
+        it 'find group by der oid' do
+          expect(Group.findByDerOid(group.opts[:der_oid]) == group).to be_truthy 
+        end
+        
         it 'has valid signature' do
           expect(verifier.verify(digest_num, public_key, signature)).to be_truthy
         end
