@@ -36,8 +36,8 @@ module CryptoGost3410
     
     def self.findByOid(oid)
       group = nil
-      NAMES.each do |name|
-        g = Object.const_get("CryptoGost3410::Group::#{name}")
+      NAMES.each do |n|
+        g = Object.const_get("CryptoGost3410::Group::#{n}")
         if g.opts[:oid] == oid then
           group = g
           break
@@ -48,8 +48,8 @@ module CryptoGost3410
 
     def self.findByDerOid(der_oid)
       group = nil
-      NAMES.each do |name|
-        g = Object.const_get("CryptoGost3410::Group::#{name}")
+      NAMES.each do |n|
+        g = Object.const_get("CryptoGost3410::Group::#{n}")
         if g.opts[:der_oid] == der_oid then
           group = g
           break
@@ -60,8 +60,8 @@ module CryptoGost3410
 
     def self.findById(id)
       group = nil
-      NAMES.each do |name|
-        g = Object.const_get("CryptoGost3410::Group::#{name}")
+      NAMES.each do |n|
+        g = Object.const_get("CryptoGost3410::Group::#{n}")
         if g.opts[:id] == id then
           group = g
           break
@@ -72,8 +72,8 @@ module CryptoGost3410
 
     def self.findByName(name)
       group = nil
-      NAMES.each do |name|
-        g = Object.const_get("CryptoGost3410::Group::#{name}")
+      NAMES.each do |n|
+        g = Object.const_get("CryptoGost3410::Group::#{n}")
         if g.opts[:name] == name then
           group = g
           break
