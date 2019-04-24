@@ -38,6 +38,18 @@ describe CryptoGost3410 do
         let(:sender_vko) { generator.vko(ukm, private_key, receiver_public_key) }
         let(:receiver_vko) { generator.vko(ukm, receiver_private_key, public_key) }
        
+        it 'find group by name' do
+          expect(CryptoGost3410::Group.findByName(group.opts[:name]) == group).to be_truthy 
+        end
+        
+        it 'find group by id' do
+          expect(CryptoGost3410::Group.findById(group.opts[:id]) == group).to be_truthy 
+        end
+        
+        it 'find group by oid' do
+          expect(CryptoGost3410::Group.findByOid(group.opts[:oid]) == group).to be_truthy 
+        end
+        
         it 'find group by der oid' do
           expect(CryptoGost3410::Group.findByDerOid(group.opts[:der_oid]) == group).to be_truthy 
         end
