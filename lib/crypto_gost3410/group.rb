@@ -40,14 +40,14 @@ module CryptoGost3410
     end
 
     GROUPS = [
-      Gost256tc26test
-      Gost256tc26a
-      Gost256tc26b
-      Gost256tc26c
-      Gost256tc26d
-      Gost512tc26test
-      Gost512tc26a
-      Gost512tc26b
+      Gost256tc26test,
+      Gost256tc26a,
+      Gost256tc26b,
+      Gost256tc26c,
+      Gost256tc26d,
+      Gost512tc26test,
+      Gost512tc26a,
+      Gost512tc26b,
       Gost512tc26c
     ].freeze
     
