@@ -9,4 +9,5 @@ module CryptoGost3410
   require 'crypto_gost3410/point'
   require 'crypto_gost3410/group'
   require 'crypto_gost3410/modular_arithmetic'
+  require 'crypto_gost3410/converter'
 end

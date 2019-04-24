@@ -121,6 +121,9 @@ Or install it locally from source crypto_gost3410 project directory
   signature_point_ok = CryptoGost3410::Verifier.new(group).verify(digest32_num, public_key_point, signature_point)
   puts "signature_point_ok: #{signature_point_ok}"
   
+  # Converting signature point to byte string ( s||r, big-endian):
+  
+  
 === List of TC 26 GOST 34.10-2012 elliptic curves:
 
   Gost256tc26test - id-tc26-gost-3410-2012-256-paramSetTest (former id-GostR3410-2001-TestParamSet). Use for testing only!
