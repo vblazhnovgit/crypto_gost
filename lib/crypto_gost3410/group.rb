@@ -38,22 +38,11 @@ module CryptoGost3410
     NAMES.each do |name|
       require_relative "./group/#{name.downcase}"
     end
-
-    GROUPS = [
-      Gost256tc26test,
-      Gost256tc26a,
-      Gost256tc26b,
-      Gost256tc26c,
-      Gost256tc26d,
-      Gost512tc26test,
-      Gost512tc26a,
-      Gost512tc26b,
-      Gost512tc26c
-    ].freeze
     
     def self.findByOid(oid)
       group = nil
-      GROUPS.each do |g|
+      NAMES.each do |name|
+        g = Object.const_get("CryptoGost3410::Group::#{name}")
         if g.opts[:oid] == oid then
           group = g
           break
@@ -64,7 +53,8 @@ module CryptoGost3410
 
     def self.findByDerOid(der_oid)
       group = nil
-      GROUPS.each do |g|
+      NAMES.each do |name|
+        g = Object.const_get("CryptoGost3410::Group::#{name}")
         if g.opts[:der_oid] == der_oid then
           group = g
           break
@@ -75,7 +65,8 @@ module CryptoGost3410
 
     def self.findById(id)
       group = nil
-      GROUPS.each do |g|
+      NAMES.each do |name|
+        g = Object.const_get("CryptoGost3410::Group::#{name}")
         if g.opts[:id] == id then
           group = g
           break
@@ -86,7 +77,8 @@ module CryptoGost3410
 
     def self.findByName(name)
       group = nil
-      GROUPS.each do |g|
+      NAMES.each do |name|
+        g = Object.const_get("CryptoGost3410::Group::#{name}")
         if g.opts[:name] == name then
           group = g
           break
